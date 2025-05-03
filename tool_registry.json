@@ -1,0 +1,18 @@
+{
+  "get_file_data": {
+    "type": "function",
+    "name": "get_file_data",
+    "description": "Takes the absolute path of a file stored on the local machine and returns its text contents as a string. Handles text/code files (UTF-8), PDFs (parsing), and rejects unsupported types (images/binaries) based on extension. Enforces security (disallowed paths) and size limits (30MB).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "The absolute path to the text, code, or PDF file to be read."
+        }
+      },
+      "required": ["file_path"],
+      "additionalProperties": false
+    }
+  }
+}
