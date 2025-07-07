@@ -1,0 +1,6 @@
+include LICENSE
+include README.md
+include requirements.txt
+recursive-include ai_tools *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[cod] 
