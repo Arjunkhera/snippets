@@ -1,6 +1,6 @@
 [
   {
-    "natural_language": "[TODO: Add natural language query description here]",
+    "natural_language": "Find all folders for client with relationship ID 9341455527283258, relationship type client, in category _private.qboa, for tax year 2024, with subcategory booksreview, that are not PCI",
     "notes": "Query to search for documents under a specific client",
     "elasticsearch_query": {
       "bool": {
@@ -45,7 +45,7 @@
     }
   },
   {
-    "natural_language": "[TODO: Add natural language query description here]",
+    "natural_language": "Get all documents and folders under parent folder ID 40658d40-8764-4b41-aea6-a6c6450944e6",
     "notes": "Query to search for documents under a specific folder",
     "elasticsearch_query": {
       "bool": {
@@ -87,7 +87,7 @@
     }
   },
   {
-    "natural_language": "[TODO: Add natural language query description here]",
+    "natural_language": "Find receipts with auth type REALM from offering IDs Intuit.smallbusiness.qbeswarehouse.qbwhandroidapp, Intuit.qbshared.attachments.qbdtreceiptscapturemob, or Intuit.qbshared.attachments.qbdtreceiptscapture, excluding those in reviewed category and those with data extraction status ASYNC_COMPLETED",
     "notes": "Query to search for documents that have specific offering IDs",
     "elasticsearch_query": {
       "bool": {
@@ -130,7 +130,7 @@
     }
   },
   {
-    "natural_language": "[TODO: Add natural language query description here]",
+    "natural_language": "List all documents and folders in the root folder",
     "notes": "Query to list documents under root folder",
     "elasticsearch_query": {
       "bool": {
@@ -172,7 +172,7 @@
     }
   },
   {
-    "natural_language": "[TODO: Add natural language query description here]",
+    "natural_language": "Find documents with system ID trigger-elastic-index",
     "notes": "Query to search for documents that have a specific system attribute",
     "elasticsearch_query": {
       "bool": {
@@ -192,7 +192,7 @@
     }
   },
   {
-    "natural_language": "[TODO: Add natural language query description here]",
+    "natural_language": "Find non-PCI documents with offering ID Intuit.intcollabs.collab.collabvep and external association starting with vep://reqId/557ab504-b291-42f6-9f07-7bd159cdce5d",
     "notes": "Query with nested query for offering attributes",
     "elasticsearch_query": {
       "bool": {
