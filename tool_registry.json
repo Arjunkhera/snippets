@@ -37,7 +37,7 @@
   "generate_elasticsearch_query": {
     "type": "function",
     "name": "generate_elasticsearch_query",
-    "description": "Generates syntactically valid Elasticsearch DSL queries for the entities-v4 index based on natural language descriptions. Uses GPT-4o-mini with embedded mapping, field descriptions, and few-shot examples to translate user queries like 'Fetch my W2s' or 'Find all documents under FolderId ABC' into proper Elasticsearch query objects. Returns validated query JSON that can be executed directly against the entities-v4 index. Handles error cases including ambiguous queries, invalid fields, and API failures.",
+    "description": "Generates syntactically valid Elasticsearch DSL queries for the entities-v4 index based on natural language descriptions. Uses Claude Sonnet 4.5 with embedded mapping, field descriptions, and few-shot examples to translate user queries like 'Fetch my W2s' or 'Find all documents under FolderId ABC' into proper Elasticsearch query objects. Returns validated query JSON that can be executed directly against the entities-v4 index. Handles error cases including ambiguous queries, invalid fields, and API failures.",
     "parameters": {
       "type": "object",
       "properties": {

@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Description:** Generates syntactically valid Elasticsearch queries for the entities-v4 index based on natural language descriptions. This tool uses GPT-4o-mini with embedded mapping information, field descriptions, and few-shot examples to translate user queries into proper Elasticsearch DSL queries.
+**Description:** Generates syntactically valid Elasticsearch queries for the entities-v4 index based on natural language descriptions. This tool uses Claude Sonnet 4.5 with embedded mapping information, field descriptions, and few-shot examples to translate user queries into proper Elasticsearch DSL queries.
 
 **Function Name:** `generate_elasticsearch_query`
 
@@ -73,7 +73,7 @@ The tool returns structured error responses for various failure scenarios:
 ```
 
 ### 3. LLM_API_FAILURE
-**Condition:** OpenAI API fails after all retry attempts (network error, service down, rate limiting)
+**Condition:** Anthropic API fails after all retry attempts (network error, service down, rate limiting)
 
 ```json
 {
@@ -83,12 +83,12 @@ The tool returns structured error responses for various failure scenarios:
 ```
 
 ### 4. INVALID_API_KEY
-**Condition:** OPENAI_API_KEY environment variable is missing or invalid
+**Condition:** ANTHROPIC_API_KEY environment variable is missing or invalid
 
 ```json
 {
   "error": "INVALID_API_KEY",
-  "message": "OpenAI API key is missing or invalid. Please set OPENAI_API_KEY environment variable."
+  "message": "Anthropic API key is missing or invalid. Please set ANTHROPIC_API_KEY environment variable."
 }
 ```
 
@@ -128,14 +128,14 @@ The tool returns structured error responses for various failure scenarios:
 
 ### Dependencies
 - **Required Python packages:**
-  - `openai` (>= 1.0.0) - For GPT-4o-mini API access
+  - `anthropic` (>= 0.18.0) - For Claude Sonnet 4.5 API access
   - `elasticsearch-dsl` (>= 8.0.0) - For query validation
 
 ### Environment Variables
-- **OPENAI_API_KEY** (required): Valid OpenAI API key for making LLM requests
+- **ANTHROPIC_API_KEY** (required): Valid Anthropic API key for making LLM requests
 
 ### LLM Configuration
-- **Model:** gpt-4o-mini
+- **Model:** claude-sonnet-4-5-20250929 (Claude Sonnet 4.5)
 - **Temperature:** 0.0 (deterministic output)
 - **Timeout:** 60 seconds per request
 - **Retry Logic:** 3 attempts with exponential backoff (2s, 4s, 8s delays)
@@ -346,7 +346,7 @@ Expected format:
 
 1. Load embedded resources (mapping, field descriptions, examples) at module level
 2. Construct prompt with user query
-3. Call OpenAI API with retry logic
+3. Call Anthropic API with retry logic
 4. Parse LLM response
 5. Validate with elasticsearch-dsl
 6. Return result
