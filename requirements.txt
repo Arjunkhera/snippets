@@ -2,8 +2,12 @@
 pypdf>=4.0.0,<5.0.0
 
 # Testing framework
-pytest>=7.0.0,<9.0.0 
+pytest>=7.0.0,<9.0.0
 pytest-mock>=3.10.0,<4.0.0 # For mocking in tests
+
+# Elasticsearch query generation
+anthropic>=0.18.0
+elasticsearch-dsl>=8.0.0
 
 # LangGraph and Multi-Agent System
 langgraph>=0.0.20
