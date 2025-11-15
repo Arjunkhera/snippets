@@ -1,0 +1,280 @@
+## Your Task
+
+Convert the following natural language query into a valid Elasticsearch DSL query for the entities-v4 index.
+
+## Examples
+
+Here are example natural language queries and their corresponding Elasticsearch queries:
+
+
+### Example 1
+**Natural Language**: Find all folders for client with relationship ID 9341455527283258, relationship type client, in category _private.qboa, for tax year 2024, with subcategory booksreview, that are not PCI
+
+**Elasticsearch Query**:
+```json
+{
+  "bool": {
+    "must": [
+      {
+        "term": {
+          "entityType.keyword": "FOLDER"
+        }
+      },
+      {
+        "term": {
+          "commonAttributes.applicationAttributes.relationshipId.keyword": "9341455527283258"
+        }
+      },
+      {
+        "term": {
+          "commonAttributes.applicationAttributes.relationshipType.keyword": "client"
+        }
+      },
+      {
+        "term": {
+          "commonAttributes.applicationAttributes.category.keyword": "_private.qboa"
+        }
+      },
+      {
+        "term": {
+          "authorization.isPci": false
+        }
+      },
+      {
+        "term": {
+          "commonAttributes.taxYear.keyword": 2024
+        }
+      },
+      {
+        "term": {
+          "commonAttributes.applicationAttributes.subcategory.keyword": "booksreview"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Example 2
+**Natural Language**: Get all documents and folders under parent folder ID 40658d40-8764-4b41-aea6-a6c6450944e6
+
+**Elasticsearch Query**:
+```json
+{
+  "bool": {
+    "should": [
+      {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "entityType.keyword": "DOCUMENT"
+              }
+            },
+            {
+              "term": {
+                "systemAttributes.parentId.keyword": "40658d40-8764-4b41-aea6-a6c6450944e6"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "entityType.keyword": "FOLDER"
+              }
+            },
+            {
+              "term": {
+                "systemAttributes.parentId.keyword": "40658d40-8764-4b41-aea6-a6c6450944e6"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+### Example 3
+**Natural Language**: Find receipts with auth type REALM from offering IDs Intuit.smallbusiness.qbeswarehouse.qbwhandroidapp, Intuit.qbshared.attachments.qbdtreceiptscapturemob, or Intuit.qbshared.attachments.qbdtreceiptscapture, excluding those in reviewed category and those with data extraction status ASYNC_COMPLETED
+
+**Elasticsearch Query**:
+```json
+{
+  "bool": {
+    "filter": [
+      {
+        "terms": {
+          "systemAttributes.offeringId.keyword": [
+            "Intuit.smallbusiness.qbeswarehouse.qbwhandroidapp",
+            "Intuit.qbshared.attachments.qbdtreceiptscapturemob",
+            "Intuit.qbshared.attachments.qbdtreceiptscapture"
+          ]
+        }
+      }
+    ],
+    "must": [
+      {
+        "term": {
+          "commonAttributes.documentType.keyword": "receipt"
+        }
+      },
+      {
+        "term": {
+          "authorization.authType.keyword": "REALM"
+        }
+      }
+    ],
+    "must_not": [
+      {
+        "term": {
+          "commonAttributes.applicationAttributes.category.keyword": "reviewed"
+        }
+      },
+      {
+        "term": {
+          "systemAttributes.dataExtractionStatus.keyword": "ASYNC_COMPLETED"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Example 4
+**Natural Language**: List all documents and folders in the root folder
+
+**Elasticsearch Query**:
+```json
+{
+  "bool": {
+    "should": [
+      {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "entityType.keyword": "DOCUMENT"
+              }
+            },
+            {
+              "term": {
+                "systemAttributes.parentId.keyword": "root"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "entityType.keyword": "FOLDER"
+              }
+            },
+            {
+              "term": {
+                "systemAttributes.parentId.keyword": "root"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+### Example 5
+**Natural Language**: Find documents with system ID trigger-elastic-index
+
+**Elasticsearch Query**:
+```json
+{
+  "bool": {
+    "must": [
+      {
+        "term": {
+          "entityType.keyword": "DOCUMENT"
+        }
+      },
+      {
+        "term": {
+          "systemAttributes.id.keyword": "trigger-elastic-index"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Example 6
+**Natural Language**: Find non-PCI documents with offering ID Intuit.intcollabs.collab.collabvep and external association starting with vep://reqId/557ab504-b291-42f6-9f07-7bd159cdce5d
+
+**Elasticsearch Query**:
+```json
+{
+  "bool": {
+    "should": [
+      {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "entityType.keyword": "DOCUMENT"
+              }
+            },
+            {
+              "term": {
+                "authorization.isPci": false
+              }
+            },
+            {
+              "nested": {
+                "path": "commonAttributes.offeringAttributes",
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "commonAttributes.offeringAttributes.offeringId.keyword": "Intuit.intcollabs.collab.collabvep"
+                        }
+                      },
+                      {
+                        "prefix": {
+                          "commonAttributes.offeringAttributes.externalAssociations.keyword": "vep://reqId/557ab504-b291-42f6-9f07-7bd159cdce5d"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+
+## User Query
+
+Now, convert this natural language query to an Elasticsearch DSL query:
+
+"{{USER_QUERY}}"
+
+## Your Response
+
+Return ONLY valid JSON. Either:
+1. A valid Elasticsearch query object, OR
+2. An error object with "error" and "message" fields
+
+Do not include any explanatory text outside the JSON.

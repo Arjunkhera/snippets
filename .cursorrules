@@ -1,0 +1,15 @@
+# Cursor AI Rules
+
+## File Organization
+
+- **NEVER** create summary files, progress reports, changelogs, validation reports, or similar AI-generated working documentation at the root level of the project.
+- **ALWAYS** place such files in the `/Cursor` directory to keep the workspace clean and organized.
+- Examples of files that belong in `/Cursor`:
+  - CHANGELOG_*.md (e.g., CHANGELOG_REFACTORING.md)
+  - VALIDATION_*.md (e.g., VALIDATION_REPORT.md)
+  - FIXES_*.md
+  - PROGRESS_*.md
+  - SUMMARY_*.md
+  - Any other temporary or session-specific documentation files
+- Exception: User-facing documentation like README.md, LICENSE, and project-specific docs in designated folders (PRDs/, Prompts/, etc.) should remain in their appropriate locations.
+

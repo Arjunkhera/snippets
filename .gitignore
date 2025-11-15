@@ -35,4 +35,7 @@ htmlcov/
 Thumbs.db
 
 # Logs
-*.log 
+*.log
+
+# Cursor AI working files
+Cursor/
