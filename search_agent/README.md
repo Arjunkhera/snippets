@@ -43,13 +43,15 @@ User Query → [Classifier] → [Planner] → [Executor Loop] → [Formatter] �
 - Unit tests
 - Example queries
 
-### 🔄 Phase 3: Query Executor Node (NEXT)
+### ✅ Phase 3: Query Executor Node (COMPLETE)
 - Executor loop node implementation
 - Integration with ES query generator
 - Step-by-step execution
 - Result passing between steps
+- Clarification handling (HITL)
+- Error handling and retries
 
-### 📋 Phase 4: Classifier & Formatter Nodes
+### 🔄 Phase 4: Classifier & Formatter Nodes (NEXT)
 - Query classifier node
 - Response formatter node
 - Complete graph assembly
