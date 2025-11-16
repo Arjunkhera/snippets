@@ -27,6 +27,7 @@ from search_agent.nodes import (
     query_executor_node,
     response_formatter_node,
 )
+from search_agent.config import settings
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -230,6 +231,60 @@ def create_search_agent_graph(checkpointer=None) -> StateGraph:
     logger.info("Search agent graph compiled successfully")
 
     return compiled_graph
+
+
+def create_search_agent_graph_from_config() -> StateGraph:
+    """
+    Create search agent graph with checkpointer from configuration settings.
+
+    Uses settings to determine checkpoint backend:
+    - settings.CHECKPOINTER_TYPE: "memory", "postgres", or "redis"
+    - settings.POSTGRES_CONNECTION_STRING: PostgreSQL connection (if postgres)
+    - settings.REDIS_URL: Redis URL (if redis)
+
+    Returns:
+        Compiled StateGraph with configured checkpointer
+
+    Example:
+        >>> # Set environment variables or .env file:
+        >>> # CHECKPOINTER_TYPE=postgres
+        >>> # POSTGRES_CONNECTION_STRING=postgresql://localhost/db
+        >>> graph = create_search_agent_graph_from_config()
+    """
+    from search_agent.utils.checkpointing import get_checkpointer
+
+    # Build checkpointer config from settings
+    checkpointer_config = {"backend": settings.CHECKPOINTER_TYPE}
+
+    if settings.CHECKPOINTER_TYPE == "postgres":
+        if settings.POSTGRES_CONNECTION_STRING:
+            checkpointer_config["connection_string"] = settings.POSTGRES_CONNECTION_STRING
+        else:
+            logger.warning(
+                "CHECKPOINTER_TYPE is 'postgres' but POSTGRES_CONNECTION_STRING is not set. "
+                "Falling back to MemorySaver."
+            )
+            checkpointer_config["backend"] = "memory"
+
+    elif settings.CHECKPOINTER_TYPE == "redis":
+        if settings.REDIS_URL:
+            checkpointer_config["redis_url"] = settings.REDIS_URL
+        else:
+            logger.warning(
+                "CHECKPOINTER_TYPE is 'redis' but REDIS_URL is not set. "
+                "Falling back to MemorySaver."
+            )
+            checkpointer_config["backend"] = "memory"
+
+    # Create checkpointer
+    try:
+        checkpointer = get_checkpointer(**checkpointer_config)
+        logger.info(f"Using {checkpointer_config['backend']} checkpointer from config")
+    except Exception as e:
+        logger.error(f"Failed to create checkpointer: {e}. Falling back to MemorySaver.")
+        checkpointer = MemorySaver()
+
+    return create_search_agent_graph(checkpointer=checkpointer)
 
 
 def visualize_graph(graph: StateGraph, output_path: str = "search_agent_graph.png"):
