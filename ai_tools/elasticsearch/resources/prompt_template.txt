@@ -40,6 +40,22 @@ Convert the user's natural language query into a valid Elasticsearch DSL query f
      "message": "Specific explanation of what is ambiguous and what clarification is needed"
    }
    ```
+   
+   **Common Ambiguities:**
+   - **Folder/Document References:** If a query mentions a folder or document by a value that could be either a name or an ID, ask for clarification. Entity IDs are UUIDs (e.g., "40658d40-8764-4b41-aea6-a6c6450944e6"), while names are human-readable strings. Examples:
+     * "List documents under folder ABC" - Is "ABC" the folder name or folder ID?
+     * "Find documents in MyFolder" - Is "MyFolder" a name or an ID?
+   
+   **Field Selection Based on Identifier Type:**
+   - **If UUID format** (e.g., "40658d40-8764-4b41-aea6-a6c6450944e6"):
+     * To find children under a folder: use `systemAttributes.parentId.keyword`
+     * To find a specific entity by ID: use `systemAttributes.id.keyword`
+     * To search within a folder hierarchy: use `organizationAttributes.folderPathIds.keyword`
+   
+   - **If human-readable name** (not a UUID):
+     * To find entities under a folder by name: use `organizationAttributes.folderPath.keyword` (searches folder path hierarchy)
+     * To find entities by their own name: use `commonAttributes.name.keyword` for exact match or `commonAttributes.name` for partial match
+     * Note: `organizationAttributes.folderPath` contains all folder names in the path, so matching against it finds entities anywhere under that folder
 
 6. **Unknown Fields:** If the query asks for fields not in the mapping, respond with:
    ```json
@@ -70,6 +86,14 @@ Below is the complete mapping for the entities-v4 index. Refer to this for all f
 The following descriptions explain the semantic meaning of key fields in the mapping:
 
 {{FIELD_DESCRIPTIONS}}
+
+## Sample Document
+
+Here is a complete example of what a document looks like in the entities-v4 index. This shows you the actual structure and data that exists in the index:
+
+```json
+{{FULL_DOCUMENT}}
+```
 
 ## Examples
 

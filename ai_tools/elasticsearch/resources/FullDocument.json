@@ -1,0 +1,243 @@
+{
+    "_index": "entities-v4",
+    "_id": "4621027474543685332_30398388-e3ee-467a-b342-3bc8c33f3af8",
+    "_score": 27.77823,
+    "_routing": "4621027474543685332",
+    "_type": "_doc",
+    "_source": {
+        "entityType": "DOCUMENT",
+        "authorization": {
+            "ownershipType": "OWNED",
+            "authType": "REALM",
+            "authId": "4621027474543685332",
+            "sharedByAuth": {
+                "authId": "4621027474543685332",
+                "authType": "REALM"
+            },
+            "sharedToAuth": [
+                {
+                    "authId": "4621027474543685332",
+                    "authType": "REALM"
+                }
+            ],
+            "ownerMetadata": {
+                "accountId": "4621027474543685332",
+                "accountType": "realm",
+                "contextId": "4621027474543685332",
+                "contextType": "realm",
+                "ownershipType": "realm"
+            },
+            "permissionPrecedence": 0,
+            "routingId": "4621027474543685332",
+            "accessType": "OWNED",
+            "isAuthZ": false,
+            "isTargetState": false,
+            "isPci": false
+        },
+        "organizationAttributes": {
+            "folderPath": "root/Arjun-Parent-Folder-Target-Test-2/SubFolder-1-Failure-Test",
+            "parentFolderId": "4d3a2df1-1678-498c-99ee-b55960542d30",
+            "folderPathIds": [
+                "root",
+                "280d02d2-ec61-4996-a84b-648ceab69476",
+                "4d3a2df1-1678-498c-99ee-b55960542d30"
+            ]
+        },
+        "systemAttributes": {
+            "id": "30398388-e3ee-467a-b342-3bc8c33f3af8",
+            "parentId": "4d3a2df1-1678-498c-99ee-b55960542d30",
+            "version": "1763208691711|document|30398388-e3ee-467a-b342-3bc8c33f3af8",
+            "userCreateDate": 1763208684696,
+            "createDate": 1763208691711,
+            "modifyDate": 1763208691628,
+            "ttlExpDate": 1763295084694,
+            "owner": {
+                "namespaceId": "4621027474543685332",
+                "realmId": "4621027474543685332",
+                "ownerAccountId": "4621027474543685332",
+                "ownerAccountType": "REALM"
+            },
+            "ownerMetadata": {
+                "accountId": "4621027474543685332",
+                "accountType": "realm",
+                "contextId": "4621027474543685332",
+                "contextType": "realm",
+                "ownershipType": "realm"
+            },
+            "creatorMetadata": {
+                "creatorUserId": "4621097880539426397",
+                "creatorAccountId": "4621027474543685332",
+                "creatorPersonaId": "9341456116297449",
+                "creatorUserIdPseudonym": "133e281b0e8967f4d11adc73e568db33de6",
+                "creatorRealmId": "4621027474543685332",
+                "creatorNamespaceId": "50000003"
+            },
+            "assetId": "4324599134368577128",
+            "lastUpdatingAssetId": "4324599134368577128",
+            "semanticSource": "SYSTEM_GENERATED",
+            "dataExtractionStatus": "ASYNC_COMPLETED",
+            "extractor": "dup",
+            "extractionConfidence": 1.0,
+            "offeringId": "Intuit.app.uicomponents.taxformsuploadwidget",
+            "semanticHash": "287d1d4d8a9df79fc33743210af78ce6",
+            "createdBy": "4621097880539426397",
+            "modifiedBy": "4621097880539426397",
+            "appCreated": "Intuit.platform.fdp.docservice",
+            "appModified": "Intuit.platform.fdp.docservice",
+            "originalDocumentName": "Test-1.png",
+            "masterVersion": 1763208691629,
+            "isTargetState": false,
+            "isAutoEnforcedTTL": false,
+            "selfLocator": "/documents/30398388-e3ee-467a-b342-3bc8c33f3af8",
+            "channel": "upload",
+            "sourceLocators": [
+                {
+                    "contentType": "image/png",
+                    "index": "1",
+                    "locator": "/documents/30398388-e3ee-467a-b342-3bc8c33f3af8/sources/1",
+                    "thumbnailPresent": true,
+                    "size": 326603,
+                    "virusScanStatus": "CLEAN",
+                    "contentModerationStatus": "PENDING",
+                    "largeFile": false,
+                    "thumbnailLocators": [
+                        {
+                            "thumbnailType": "medium",
+                            "locator": "/documents/30398388-e3ee-467a-b342-3bc8c33f3af8/sources/1/thumbnails?imageSize=medium",
+                            "contentType": "image/jpeg"
+                        },
+                        {
+                            "thumbnailType": "extraLarge",
+                            "locator": "/documents/30398388-e3ee-467a-b342-3bc8c33f3af8/sources/1/thumbnails?imageSize=extraLarge",
+                            "contentType": "image/jpeg"
+                        },
+                        {
+                            "thumbnailType": "large",
+                            "locator": "/documents/30398388-e3ee-467a-b342-3bc8c33f3af8/sources/1/thumbnails?imageSize=large",
+                            "contentType": "image/jpeg"
+                        }
+                    ]
+                }
+            ],
+            "alternateDataLocators": [
+                {
+                    "contentType": "desResponseData",
+                    "alternateDataType": "desResponseData",
+                    "locator": "/documents/30398388-e3ee-467a-b342-3bc8c33f3af8/alternateData/desResponseData"
+                },
+                {
+                    "contentType": "desRequestData",
+                    "alternateDataType": "desRequestData",
+                    "locator": "/documents/30398388-e3ee-467a-b342-3bc8c33f3af8/alternateData/desRequestData"
+                },
+                {
+                    "contentType": "rawSemanticData",
+                    "alternateDataType": "rawSemanticData",
+                    "locator": "/documents/30398388-e3ee-467a-b342-3bc8c33f3af8/alternateData/rawSemanticData"
+                }
+            ],
+            "size": 326603
+        },
+        "commonAttributes": {
+            "name": "Test-1.png",
+            "documentType": "W2",
+            "ttlDuration": "1d",
+            "location": {
+                "lat": "0",
+                "lng": "0",
+                "address": {
+                    "addressLine1": "123 Main St",
+                    "addressLine2": "Apt 1",
+                    "addressLine3": "Apt 2",
+                    "country": "US",
+                    "state": "CA",
+                    "city": "Mountain View",
+                    "zip": "94043"
+                }
+            },
+            "is7216": false,
+            "semanticVersion": "2.0.0",
+            "annotation": "Annotation",
+            "providerName": "Intuit",
+            "taxYear": "2023",
+            "companyRealmId": "123456789",
+            "providerId": "123",
+            "credentialSetId": "123456789",
+            "userConsentRequired": false,
+            "description": "Description",
+            "notes": "Notes",
+            "applicationAttributes": {
+                "relationshipId": "123456789",
+                "relationshipType": "employee",
+                "category": "payroll",
+                "accountNumber": "123456789",
+                "statementDate": 1697198753451,
+                "dueDate": 1697198753451,
+                "subcategory": "payroll",
+                "relationshipList": [
+                    {
+                        "relationshipId": "123456789",
+                        "relationshipType": "employee",
+                        "category": "payroll",
+                        "subcategory": "payroll"
+                    }
+                ]
+            },
+            "notificationAttributes": {
+                "destination": {
+                    "type": "email",
+                    "value": "value",
+                    "alias": "value"
+                }
+            },
+            "complianceAttributes": {
+                "forbidUpdate": false,
+                "forbidDelete": false,
+                "restrictUpdate": false,
+                "includeInDG": [
+                    "DELETE",
+                    "ACCESS"
+                ]
+            },
+            "additionalIds": {
+                "correlationId": "c911883f-851c-4ff4-aaff-3e6fc21c2706"
+            },
+            "domainAttributes": [
+                {
+                    "domain": "BUSINESS",
+                    "nameValues": [
+                        {
+                            "name": "documentStatus",
+                            "value": "System generated"
+                        },
+                        {
+                            "name": "region",
+                            "value": "us"
+                        }
+                    ]
+                }
+            ],
+            "offeringAttributes": [
+                {
+                    "offeringId": "Intuit.workermgmt.employeemgmt",
+                    "externalAssociations": [
+                        "123"
+                    ],
+                    "nameValues": [
+                        {
+                            "name": "documentStatus",
+                            "value": "System generated"
+                        },
+                        {
+                            "name": "region",
+                            "value": "us"
+                        }
+                    ]
+                }
+            ],
+            "tags": [
+                "tag-1"
+            ]
+        }
+    }
+}

@@ -46,6 +46,7 @@ _RESOURCES_DIR = _SCRIPT_DIR / "resources"
 DEFAULT_MAPPING_PATH = _RESOURCES_DIR / "Mapping.json"
 DEFAULT_FIELD_DESCRIPTIONS_PATH = _RESOURCES_DIR / "FieldDescriptions.json"
 DEFAULT_FEW_SHOT_EXAMPLES_PATH = _RESOURCES_DIR / "FewShotExamples.json"
+DEFAULT_FULL_DOCUMENT_PATH = _RESOURCES_DIR / "FullDocument.json"
 DEFAULT_PROMPT_TEMPLATE_PATH = _RESOURCES_DIR / "prompt_template.txt"
 
 
@@ -112,6 +113,21 @@ def _load_few_shot_examples(examples_path: Optional[Path] = None) -> list:
     return _load_json_file(path)
 
 
+def _load_full_document(full_document_path: Optional[Path] = None) -> str:
+    """
+    Load full document example from JSON file.
+    
+    Args:
+        full_document_path: Optional custom path to full document file
+        
+    Returns:
+        Full document as JSON string
+    """
+    path = full_document_path or DEFAULT_FULL_DOCUMENT_PATH
+    full_document_dict = _load_json_file(path)
+    return json.dumps(full_document_dict, indent=2)
+
+
 def _load_prompt_template(template_path: Optional[Path] = None) -> str:
     """
     Load prompt template from text file.
@@ -146,6 +162,7 @@ def _build_llm_prompt(
     mapping: Optional[str] = None,
     field_descriptions: Optional[Dict[str, str]] = None,
     few_shot_examples: Optional[list] = None,
+    full_document: Optional[str] = None,
     prompt_template: Optional[str] = None
 ) -> str:
     """
@@ -156,6 +173,7 @@ def _build_llm_prompt(
         mapping: Optional Elasticsearch mapping JSON string (loads from file if not provided)
         field_descriptions: Optional field descriptions dict (loads from file if not provided)
         few_shot_examples: Optional few-shot examples list (loads from file if not provided)
+        full_document: Optional full document example JSON string (loads from file if not provided)
         prompt_template: Optional prompt template string (loads from file if not provided)
 
     Returns:
@@ -172,6 +190,8 @@ def _build_llm_prompt(
         field_descriptions = _load_field_descriptions()
     if few_shot_examples is None:
         few_shot_examples = _load_few_shot_examples()
+    if full_document is None:
+        full_document = _load_full_document()
     if prompt_template is None:
         prompt_template = _load_prompt_template()
 
@@ -188,6 +208,7 @@ def _build_llm_prompt(
     # Replace placeholders in template
     prompt = prompt_template.replace("{{MAPPING}}", mapping)
     prompt = prompt.replace("{{FIELD_DESCRIPTIONS}}", descriptions_str)
+    prompt = prompt.replace("{{FULL_DOCUMENT}}", full_document)
     prompt = prompt.replace("{{FEW_SHOT_EXAMPLES}}", examples_str)
     prompt = prompt.replace("{{USER_QUERY}}", user_query)
 
@@ -278,16 +299,19 @@ def generate_elasticsearch_query(
     mapping: Optional[str] = None,
     field_descriptions: Optional[Dict[str, str]] = None,
     few_shot_examples: Optional[list] = None,
+    full_document: Optional[str] = None,
     mapping_path: Optional[Path] = None,
     field_descriptions_path: Optional[Path] = None,
-    few_shot_examples_path: Optional[Path] = None
+    few_shot_examples_path: Optional[Path] = None,
+    full_document_path: Optional[Path] = None
 ) -> Dict[str, Any]:
     """
     Generates a syntactically valid Elasticsearch DSL query for the entities-v4 index
     based on a natural language description.
 
     This tool uses Claude Sonnet 4.5 with mapping information, field descriptions,
-    and few-shot examples to translate user queries into proper Elasticsearch DSL queries.
+    full document example, and few-shot examples to translate user queries into proper 
+    Elasticsearch DSL queries.
 
     Args:
         query: Natural language query describing the search requirement.
@@ -295,9 +319,11 @@ def generate_elasticsearch_query(
         mapping: Optional Elasticsearch mapping JSON string (loads from file if not provided)
         field_descriptions: Optional field descriptions dict (loads from file if not provided)
         few_shot_examples: Optional few-shot examples list (loads from file if not provided)
+        full_document: Optional full document example JSON string (loads from file if not provided)
         mapping_path: Optional custom path to mapping JSON file
         field_descriptions_path: Optional custom path to field descriptions JSON file
         few_shot_examples_path: Optional custom path to few-shot examples JSON file
+        full_document_path: Optional custom path to full document JSON file
 
     Returns:
         A dictionary containing either:
@@ -325,6 +351,7 @@ def generate_elasticsearch_query(
         - Mapping: Resources/Schemas/Mapping.json
         - Field Descriptions: Resources/Schemas/FieldDescriptions.json
         - Few-Shot Examples: Resources/Schemas/FewShotExamples.json
+        - Full Document: Resources/Schemas/FullDocument.json
     """
     # Check for empty query
     if not query or not query.strip():
@@ -349,6 +376,8 @@ def generate_elasticsearch_query(
             field_descriptions = _load_field_descriptions(field_descriptions_path)
         if few_shot_examples_path is not None and few_shot_examples is None:
             few_shot_examples = _load_few_shot_examples(few_shot_examples_path)
+        if full_document_path is not None and full_document is None:
+            full_document = _load_full_document(full_document_path)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         return {
             "error": "RESOURCE_LOAD_ERROR",
@@ -361,7 +390,8 @@ def generate_elasticsearch_query(
             query.strip(),
             mapping=mapping,
             field_descriptions=field_descriptions,
-            few_shot_examples=few_shot_examples
+            few_shot_examples=few_shot_examples,
+            full_document=full_document
         )
 
         # Call LLM with retry logic

@@ -133,23 +133,46 @@ Available placeholders:
 
 ## Prompt Engineering with Claude Prompt Bench
 
-For prompt optimization, use the split prompts in `Prompts/`:
+### Generate Prompt Bench Files
 
-- **elasticsearch_system_prompt.txt**: System instructions with mapping and descriptions (~215K chars)
-- **elasticsearch_user_prompt_template.txt**: User prompt with examples (~6K chars)
+Use the included script to generate split prompt files for Prompt Bench:
+
+```bash
+python ai_tools/elasticsearch/generate_prompt_bench_files.py
+# or (from ai_tools/elasticsearch/)
+./generate_prompt_bench_files.py
+```
+
+This creates:
+- **elasticsearch_system_prompt.md**: Rules, mapping, field descriptions, and few-shot examples (~75K chars)
+- **elasticsearch_user_prompt_template.md**: Task description and user query placeholder (~350 chars)
 
 ### Using in Prompt Bench
 
-1. Copy `elasticsearch_system_prompt.txt` → System field
-2. Copy `elasticsearch_user_prompt_template.txt` → User field
-3. Replace `{{USER_QUERY}}` with test queries
-4. Test different variations of rules, examples, descriptions
+1. Run the generator script above (or use existing files in `Prompts/`)
+2. Copy `elasticsearch_system_prompt.md` → System field
+3. Copy `elasticsearch_user_prompt_template.md` → User field
+4. Replace `{{USER_QUERY}}` with test queries
+5. Test different variations of rules, examples, descriptions
+
+### Modifying the Prompt
+
+After editing resource files, regenerate Prompt Bench files:
+
+```bash
+# Edit resources
+vim ai_tools/elasticsearch/resources/FewShotExamples.json
+vim ai_tools/elasticsearch/resources/prompt_template.txt
+
+# Regenerate Prompt Bench files
+python ai_tools/elasticsearch/generate_prompt_bench_files.py
+```
 
 ### Why Split?
 
-- **System prompt**: Cached by Claude, includes static mapping/descriptions
-- **User prompt**: Variable content (examples, query), easier to iterate
-- **Result**: Lower cost, faster experimentation
+- **System prompt**: Cached by Claude (~75K tokens) - includes static mapping, descriptions, and examples
+- **User prompt**: Minimal size (~350 chars) - only the specific user query changes
+- **Result**: Massive cost savings (cached tokens are 90% cheaper) and faster iteration
 
 ## API Response Format
 
