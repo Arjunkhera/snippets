@@ -29,20 +29,21 @@ User Query → [Classifier] → [Planner] → [Executor Loop] → [Formatter] �
 
 ## Project Status
 
-### ✅ Phase 1: Foundation & State Management (CURRENT)
+### ✅ Phase 1: Foundation & State Management (COMPLETE)
 - Project structure setup
 - State schema definition
 - Mock Elasticsearch service interface
 - Configuration management
 - Basic utilities
 
-### 🔄 Phase 2: Query Planner Node (NEXT)
+### ✅ Phase 2: Query Planner Node (COMPLETE)
 - Query planner implementation
 - Planner prompt engineering
 - Plan validation logic
 - Unit tests
+- Example queries
 
-### 📋 Phase 3: Query Executor Node
+### 🔄 Phase 3: Query Executor Node (NEXT)
 - Executor loop node implementation
 - Integration with ES query generator
 - Step-by-step execution
