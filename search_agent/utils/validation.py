@@ -5,7 +5,10 @@ Provides helper functions for query validation, field extraction,
 and result formatting.
 """
 
-from typing import Dict, Any, List, Set
+from typing import Dict, Any, List, Set, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from search_agent.core.models import QueryPlan
 
 
 def extract_fields_from_query(query: Dict[str, Any]) -> Set[str]:
@@ -276,3 +279,113 @@ def format_folder_for_display(folder_source: Dict[str, Any]) -> str:
         lines.append(f"   Description: {description}")
 
     return "\n".join(lines)
+
+
+def validate_query_plan(plan: "QueryPlan") -> List[str]:
+    """
+    Validate query plan structure and dependencies.
+
+    Performs comprehensive validation of a QueryPlan to ensure it's
+    well-formed and executable.
+
+    Args:
+        plan: QueryPlan model instance to validate
+
+    Returns:
+        List of validation error messages (empty if valid)
+
+    Validation Rules:
+        - total_steps matches length of steps array
+        - Steps are numbered sequentially starting from 1
+        - depends_on_step references valid previous steps
+        - plan_type matches step count (single_step = 1, multi_step >= 2)
+        - Step descriptions are meaningful (>= 10 characters)
+
+    Example:
+        >>> from search_agent.core.models import QueryPlan, Step
+        >>> plan = QueryPlan(
+        ...     plan_type="multi_step",
+        ...     reasoning="Need to resolve folder name to ID",
+        ...     total_steps=2,
+        ...     steps=[
+        ...         Step(step=1, description="Find folder by name"),
+        ...         Step(step=2, description="Find documents in folder", depends_on_step=1)
+        ...     ]
+        ... )
+        >>> errors = validate_query_plan(plan)
+        >>> len(errors)
+        0
+    """
+    errors = []
+
+    # Validation 1: total_steps matches steps array length
+    if plan.total_steps != len(plan.steps):
+        errors.append(
+            f"total_steps ({plan.total_steps}) does not match "
+            f"length of steps array ({len(plan.steps)})"
+        )
+
+    # Validation 2: Steps are numbered sequentially starting from 1
+    expected_step = 1
+    for step in plan.steps:
+        if step.step != expected_step:
+            errors.append(
+                f"Steps must be sequential starting from 1. "
+                f"Expected step {expected_step}, got step {step.step}"
+            )
+        expected_step += 1
+
+    # Validation 3: depends_on_step references valid previous steps
+    step_numbers = {step.step for step in plan.steps}
+    for step in plan.steps:
+        if step.depends_on_step is not None:
+            # Check that referenced step exists
+            if step.depends_on_step not in step_numbers:
+                errors.append(
+                    f"Step {step.step} depends on non-existent step {step.depends_on_step}"
+                )
+
+            # Check that dependency is on a previous step
+            if step.depends_on_step >= step.step:
+                errors.append(
+                    f"Step {step.step} cannot depend on step {step.depends_on_step} "
+                    f"(must depend on earlier step)"
+                )
+
+    # Validation 4: plan_type matches step count
+    if plan.plan_type == "single_step" and plan.total_steps != 1:
+        errors.append(
+            f"Plan type is 'single_step' but total_steps is {plan.total_steps} (must be 1)"
+        )
+
+    if plan.plan_type == "multi_step" and plan.total_steps < 2:
+        errors.append(
+            f"Plan type is 'multi_step' but total_steps is {plan.total_steps} (must be >= 2)"
+        )
+
+    # Validation 5: Step descriptions are meaningful
+    for step in plan.steps:
+        if len(step.description) < 10:
+            errors.append(
+                f"Step {step.step} description is too short ({len(step.description)} chars, minimum 10). "
+                f"Description: '{step.description}'"
+            )
+
+    # Validation 6: Reasoning is meaningful
+    if len(plan.reasoning) < 20:
+        errors.append(
+            f"Plan reasoning is too short ({len(plan.reasoning)} chars, minimum 20). "
+            f"Reasoning: '{plan.reasoning}'"
+        )
+
+    # Validation 7: At least one step exists
+    if len(plan.steps) == 0:
+        errors.append("Plan must have at least one step")
+
+    # Validation 8: No more than 3 steps (per Phase 2 requirements)
+    if len(plan.steps) > 3:
+        errors.append(
+            f"Plan has {len(plan.steps)} steps (maximum 3 allowed in POC phase)"
+        )
+
+    return errors

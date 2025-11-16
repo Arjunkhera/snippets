@@ -101,17 +101,14 @@ class Settings(BaseSettings):
 
     # ===== Resource Paths =====
 
-    # Get the directory containing this settings file
-    _BASE_DIR: Path = Path(__file__).parent.parent.resolve()
-
     PROMPTS_DIR: Path = Field(
-        default_factory=lambda: Settings._BASE_DIR / "prompts",
+        default=Path(__file__).parent.parent.resolve() / "prompts",
         description="Directory containing prompt templates"
     )
 
     # Path to existing ES query tool resources
     ES_TOOL_RESOURCES_DIR: Path = Field(
-        default_factory=lambda: Settings._BASE_DIR.parent / "ai_tools" / "elasticsearch" / "resources",
+        default=Path(__file__).parent.parent.parent.resolve() / "ai_tools" / "elasticsearch" / "resources",
         description="Directory containing ES mapping and examples"
     )
 
