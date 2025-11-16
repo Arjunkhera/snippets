@@ -51,12 +51,14 @@ User Query → [Classifier] → [Planner] → [Executor Loop] → [Formatter] �
 - Clarification handling (HITL)
 - Error handling and retries
 
-### 🔄 Phase 4: Classifier & Formatter Nodes (NEXT)
-- Query classifier node
-- Response formatter node
-- Complete graph assembly
+### ✅ Phase 4: Classifier & Formatter Nodes (COMPLETE)
+- Query classifier node with intent detection
+- Response formatter node with user-friendly output
+- Complete LangGraph workflow assembly
+- Unit tests for all new nodes
+- End-to-end integration example
 
-### 📋 Phase 5: Error Handling & HITL
+### 🔄 Phase 5: Error Handling & HITL (NEXT)
 - Comprehensive error handling
 - Retry logic
 - Human-in-the-loop clarifications

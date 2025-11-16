@@ -526,26 +526,261 @@ Total: 6+ tests passing
 
 ---
 
-## Phase 4: Classifier & Formatter Nodes 🔄 NEXT
+## Phase 4: Classifier & Formatter Nodes ✅ COMPLETE
 
-**Status**: 📋 Ready to start
-**Prerequisites**: Phase 3 complete ✅
+**Completed By**: Claude Code (AI Assistant)
+**Completion Date**: November 16, 2025
+**Status**: ✅ Ready for handoff to Phase 5
 
-### High-Level Objectives
+### What Was Implemented
 
-1. Implement Query Classifier node (determines search vs. other intents)
-2. Implement Response Formatter node (formats results for user)
-3. Assemble complete LangGraph workflow
-4. Add routing logic between nodes
+#### 1. Query Classifier Node (`nodes/classifier.py`)
 
-**Detailed tasks will be provided after Phase 3 completion.**
+**Purpose**: Analyze user intent and route to appropriate handlers
+
+**Function**: `query_classifier_node(state: SearchAgentState) -> SearchAgentState`
+
+**Features**:
+- LLM-based intent classification using structured JSON output
+- 5 intent categories: search, move, delete, create, other
+- Confidence levels: high, medium, low
+- Retry logic (max 2 attempts) for invalid JSON responses
+- Conversation history context for better classification
+- Defaults to "other" with low confidence on max retries
+
+**Routing Logic**:
+- "search" → planner node
+- "move", "delete", "create" → future handlers (currently routes to END)
+- "other" → END (help/unclear queries)
+
+**Validation**:
+- Required fields: intent, confidence, reasoning
+- Intent must be one of 5 valid categories
+- Confidence must be high/medium/low
+- Reasoning must be at least 10 characters
+
+**Implementation Highlights**:
+```python
+def query_classifier_node(state: SearchAgentState) -> SearchAgentState:
+    # Build classification prompt with conversation context
+    prompt = _build_classifier_prompt(...)
+
+    # Call LLM with retry logic (max 2 attempts)
+    for attempt in range(max_attempts):
+        response_json = llm.call_with_json_response(prompt)
+        _validate_classification_response(response_json)
+        return {**state, "intent": ..., "classification_confidence": ...}
+
+    # Default to "other" on failure
+    return {**state, "intent": "other", "classification_confidence": "low"}
+```
+
+#### 2. Response Formatter Node (`nodes/formatter.py`)
+
+**Purpose**: Format execution results into user-friendly responses
+
+**Function**: `response_formatter_node(state: SearchAgentState) -> SearchAgentState`
+
+**Features**:
+- Success formatting for single and multi-step queries
+- Empty results with helpful suggestions
+- Error message mapping to friendly language
+- Document formatting with emojis (📄 for docs, 📁 for folders)
+- Metadata calculation (execution time, step count, result count)
+- Multi-step transparency notes ("Resolved 'Tax Folder' to complete your search")
+
+**Formatting Patterns**:
+- **Documents**: Name, Type, Folder Path, Created Date, Size
+- **Folders**: Name, Path, Created Date
+- **File Sizes**: Human-readable (1.2 MB, 500 KB, etc.)
+- **Dates**: Formatted as "Jan 15, 2024" from ISO strings
+
+**Error Mapping**:
+- "folder_not_found" → "I couldn't find a folder with that name..."
+- "service_unavailable" → "I'm having trouble reaching the search service..."
+- "invalid_query" → "I had trouble understanding your search request..."
+- Generic errors → "An error occurred: {error}"
+
+**Implementation Highlights**:
+```python
+def response_formatter_node(state: SearchAgentState) -> SearchAgentState:
+    # Handle errors first
+    if state.get("error"):
+        return _format_error_response(state)
+
+    # Format success
+    if count == 0:
+        return _format_empty_response(state)
+
+    # Build formatted message
+    for result in results:
+        formatted = _format_single_result(result, idx)
+
+    # Add transparency note for multi-step
+    if plan_type == "multi_step":
+        note = _build_transparency_note(state)
+
+    return {**state, "response_message": message, "metadata": metadata}
+```
+
+#### 3. Complete LangGraph Workflow (`graph.py`)
+
+**Purpose**: Assemble all nodes into executable state machine
+
+**Function**: `create_search_agent_graph(checkpointer=None) -> StateGraph`
+
+**Graph Structure**:
+```
+START → Classifier → Planner → Executor (loop) → Formatter → END
+```
+
+**Routing Functions**:
+- `route_after_classifier(state)`: Routes to planner if "search", else END
+- `route_after_planner(state)`: Always routes to executor
+- `route_after_executor(state)`: Loops back for multi-step, routes to formatter when complete
+- `route_after_formatter(state)`: Always routes to END
+
+**Conditional Edges**:
+- Classifier has conditional routing based on intent
+- Executor has self-loop for multi-step queries
+- Supports HITL interrupts (pending_clarification)
+
+**Checkpointing**:
+- Default: MemorySaver (in-memory for POC)
+- Production: PostgresSaver or RedisSaver
+- Enables state persistence and resume after interrupts
+
+**Implementation Highlights**:
+```python
+def create_search_agent_graph(checkpointer=None):
+    workflow = StateGraph(SearchAgentState)
+
+    # Add nodes
+    workflow.add_node("classifier", query_classifier_node)
+    workflow.add_node("planner", query_planner_node)
+    workflow.add_node("executor", query_executor_node)
+    workflow.add_node("formatter", response_formatter_node)
+
+    # Set entry point
+    workflow.set_entry_point("classifier")
+
+    # Add conditional edges with routing
+    workflow.add_conditional_edges("classifier", route_after_classifier, ...)
+    workflow.add_conditional_edges("executor", route_after_executor, ...)
+
+    # Compile with checkpointing
+    return workflow.compile(checkpointer=checkpointer or MemorySaver())
+```
+
+#### 4. Unit Tests
+
+**test_classifier.py** (17 tests):
+- Intent classification for all 5 categories
+- Conversation history context
+- Retry logic on invalid JSON
+- Default to "other" after max retries
+- Prompt building and validation
+- All 17 tests passing ✅
+
+**test_formatter.py** (26 tests):
+- Single and multiple document formatting
+- Folder formatting
+- Empty results handling
+- Error message mapping
+- Helper functions (file size, date formatting)
+- Metadata calculation
+- Transparency notes for multi-step
+- All 26 tests passing ✅
+
+#### 5. Integration Example (`examples/example_complete_workflow.py`)
+
+**Purpose**: Demonstrate end-to-end workflow
+
+**Examples Included**:
+1. Single-step search query
+2. Multi-step query (folder name resolution)
+3. Multi-step query (document location)
+4. Move operation (shows routing to future handler)
+5. Help query (shows "other" intent handling)
+6. Complex multi-step query (owner-based search)
+
+**Usage**:
+```bash
+python search_agent/examples/example_complete_workflow.py
+```
+
+#### 6. Module Exports (`nodes/__init__.py`)
+
+Updated to export all 4 nodes:
+```python
+from .classifier import query_classifier_node
+from .planner import query_planner_node
+from .executor import query_executor_node
+from .formatter import response_formatter_node
+```
+
+### Success Criteria ✅ ALL OBJECTIVES MET
+
+- ✅ Query classifier correctly identifies 5 intent types
+- ✅ Classifier handles retry logic and defaults gracefully
+- ✅ Response formatter creates user-friendly output
+- ✅ Formatter handles success, empty, and error cases
+- ✅ Complete LangGraph workflow assembles all 4 nodes
+- ✅ Routing logic correctly directs flow between nodes
+- ✅ Executor loop node self-routes for multi-step queries
+- ✅ Unit tests comprehensive (43 tests total, all passing)
+- ✅ End-to-end integration example demonstrates full workflow
+- ✅ Documentation updated (README, PHASE_HANDOFF)
+
+### Test Results
+
+```
+test_classifier.py: 17 passed ✅
+test_formatter.py: 26 passed ✅
+Total: 43 tests passing
+```
+
+### Files Created/Modified
+
+**Created**:
+- `search_agent/nodes/classifier.py` (220 lines)
+- `search_agent/nodes/formatter.py` (430 lines)
+- `search_agent/graph.py` (310 lines)
+- `search_agent/tests/test_classifier.py` (340 lines)
+- `search_agent/tests/test_formatter.py` (490 lines)
+- `search_agent/examples/example_complete_workflow.py` (200 lines)
+
+**Modified**:
+- `search_agent/nodes/__init__.py` (updated exports)
+- `search_agent/README.md` (Phase 4 status → COMPLETE)
+- `search_agent/PHASE_HANDOFF.md` (this document)
+
+### Integration Points for Phase 5
+
+Phase 5 focuses on error handling and HITL, building on the complete workflow:
+
+1. **Error Handling Enhancement**:
+   - Currently: Basic retry logic in classifier, executor
+   - Phase 5: Comprehensive error taxonomy and recovery strategies
+
+2. **HITL Clarifications**:
+   - Currently: `pending_clarification` in state, ready for interrupts
+   - Phase 5: Implement interrupt handling, user response processing
+
+3. **Checkpointing**:
+   - Currently: Basic MemorySaver checkpointing
+   - Phase 5: Production-ready PostgreSQL/Redis checkpointing
+
+4. **State Persistence**:
+   - Currently: In-memory state during execution
+   - Phase 5: Persistent state for multi-turn conversations
 
 ---
 
-## Phase 5: Error Handling & HITL 🔄 PENDING
+## Phase 5: Error Handling & HITL 🔄 NEXT
 
-**Status**: 📋 Waiting for Phase 4
-**Prerequisites**: Phase 4 complete
+**Status**: 📋 Ready to start
+**Prerequisites**: Phase 4 complete ✅
 
 ### High-Level Objectives
 
