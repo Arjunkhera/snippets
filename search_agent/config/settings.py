@@ -133,7 +133,17 @@ class Settings(BaseSettings):
 
     CHECKPOINTER_TYPE: str = Field(
         default="memory",
-        description="Checkpointer type: 'memory' or 'postgres' (Phase 5+)"
+        description="Checkpointer type: 'memory', 'postgres', or 'redis' (Phase 5+)"
+    )
+
+    POSTGRES_CONNECTION_STRING: str = Field(
+        default="",
+        description="PostgreSQL connection string for checkpointing (optional)"
+    )
+
+    REDIS_URL: str = Field(
+        default="redis://localhost:6379",
+        description="Redis URL for checkpointing (optional)"
     )
 
     # ===== Mock Service Configuration (Phase 1) =====

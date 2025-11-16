@@ -8,12 +8,14 @@ Nodes are implemented in subsequent phases:
 - Phase 4: classifier.py (Query Classifier), formatter.py (Response Formatter)
 """
 
-# Nodes will be imported here as they are implemented
-# from .classifier import query_classifier_node
-# from .planner import query_planner_node
-# from .executor import query_executor_node
-# from .formatter import response_formatter_node
+from .classifier import query_classifier_node
+from .planner import query_planner_node
+from .executor import query_executor_node
+from .formatter import response_formatter_node
 
 __all__ = [
-    # Will be populated as nodes are implemented
+    "query_classifier_node",
+    "query_planner_node",
+    "query_executor_node",
+    "response_formatter_node",
 ]

@@ -51,18 +51,21 @@ User Query → [Classifier] → [Planner] → [Executor Loop] → [Formatter] �
 - Clarification handling (HITL)
 - Error handling and retries
 
-### 🔄 Phase 4: Classifier & Formatter Nodes (NEXT)
-- Query classifier node
-- Response formatter node
-- Complete graph assembly
+### ✅ Phase 4: Classifier & Formatter Nodes (COMPLETE)
+- Query classifier node with intent detection
+- Response formatter node with user-friendly output
+- Complete LangGraph workflow assembly
+- Unit tests for all new nodes
+- End-to-end integration example
 
-### 📋 Phase 5: Error Handling & HITL
-- Comprehensive error handling
-- Retry logic
-- Human-in-the-loop clarifications
-- Checkpointing
+### ✅ Phase 5: Error Handling & HITL (COMPLETE)
+- Persistent checkpointing (PostgreSQL, Redis, Memory)
+- HITL clarification mechanism with interrupt/resume
+- Comprehensive error handling examples
+- Configuration-based checkpointer selection
+- Error recovery demonstrations
 
-### 📋 Phase 6: Integration & Testing
+### 🔄 Phase 6: Integration & Testing (NEXT)
 - End-to-end integration tests
 - Example queries from PRD
 - Performance testing
