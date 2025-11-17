@@ -17,7 +17,7 @@ import time
 from typing import Dict, Any, List, Tuple, Optional
 
 from search_agent.core.state import SearchAgentState
-from search_agent.core.models import StepResult
+from search_agent.core.models import StepResult, ExecutionMetadata
 from search_agent.services.llm_service import get_llm_service
 from search_agent.services.elasticsearch_service import get_elasticsearch_service
 from search_agent.prompts.executor_prompt import build_executor_prompt
@@ -87,7 +87,7 @@ def query_executor_node(state: SearchAgentState) -> SearchAgentState:
             retry_count=state.get("retry_count", 0)
         )
     except Exception as e:
-        logger.error(f"Failed to generate query: {e}")
+        logger.error(f"Failed to generate query: {e}", exc_info=True)
         return {
             **state,
             "error": f"Failed to generate query for step {current_step_num}: {str(e)}"
@@ -167,12 +167,15 @@ def query_executor_node(state: SearchAgentState) -> SearchAgentState:
         }
 
     # Operation 6: Store Results
-    step_result = StepResult(
-        step=current_step_num,
+    metadata = ExecutionMetadata(
         query=es_query,
-        result=result_data,
         execution_time_ms=execution_time_ms,
         result_count=_get_result_count(result)
+    )
+    
+    step_result = StepResult(
+        source=result_data,
+        metadata=metadata
     )
 
     state["step_results"][current_step_num] = step_result.model_dump()
@@ -194,7 +197,7 @@ def query_executor_node(state: SearchAgentState) -> SearchAgentState:
 
         return {
             **state,
-            "final_results": final_step_result["result"]
+            "final_results": final_step_result["source"]
         }
 
 
@@ -231,8 +234,8 @@ def _generate_and_validate_query(
     if depends_on is not None and depends_on in step_results:
         # Get the result from the previous step
         prev_step_data = step_results[depends_on]
-        if "result" in prev_step_data:
-            previous_result = prev_step_data["result"]
+        if "source" in prev_step_data:
+            previous_result = prev_step_data["source"]
 
     # Build executor prompt
     prompt = build_executor_prompt(

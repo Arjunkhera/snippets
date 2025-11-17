@@ -130,7 +130,7 @@ def route_after_executor(
     return "formatter"
 
 
-def route_after_formatter(state: SearchAgentState) -> Literal["__end__"]:
+def route_after_formatter(state: SearchAgentState) -> Literal["end"]:
     """
     Route after formatting.
 
@@ -138,10 +138,10 @@ def route_after_formatter(state: SearchAgentState) -> Literal["__end__"]:
         state: Current state with response_message
 
     Returns:
-        Always returns END
+        Always returns "end"
     """
     logger.info("Workflow complete")
-    return END
+    return "end"
 
 
 def create_search_agent_graph(checkpointer=None) -> StateGraph:
@@ -216,7 +216,7 @@ def create_search_agent_graph(checkpointer=None) -> StateGraph:
         "formatter",
         route_after_formatter,
         {
-            "__end__": END
+            "end": END
         }
     )
 

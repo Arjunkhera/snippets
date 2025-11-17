@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "AI tooling utilities"
 readme = "README.md"
 requires-python = ">=3.6"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Arjun Khera", email = "arjunkherais@gmail.com"}
 ]
@@ -20,4 +20,9 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://github.com/yourusername/ai-tools"
-"Bug Tracker" = "https://github.com/yourusername/ai-tools/issues" 
+"Bug Tracker" = "https://github.com/yourusername/ai-tools/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ai_tools*", "search_agent*", "multi_agent_system*"]
+exclude = ["tests*", "build_instructions*", "PRDs*", "Prompts*", "Cursor*", "Resources*"]

@@ -13,3 +13,51 @@
   - Any other temporary or session-specific documentation files
 - Exception: User-facing documentation like README.md, LICENSE, and project-specific docs in designated folders (PRDs/, Prompts/, etc.) should remain in their appropriate locations.
 
+## 🚨 CRITICAL: CONDA ENVIRONMENT REQUIREMENT
+
+**ALWAYS activate the conda environment 'testing' before running ANY commands, tests, or development tasks:**
+
+```bash
+conda activate testing
+```
+
+**This project MUST use the 'testing' conda environment to avoid conflicts with global pip installations.**
+
+### Environment Setup Rules
+
+1. **Before running any Python commands:**
+   - Always check if conda environment 'testing' is active
+   - If not active, activate it with `conda activate testing`
+   - Verify with `echo $CONDA_DEFAULT_ENV` (should show 'testing')
+
+2. **Before running tests:**
+   - Ensure conda environment 'testing' is active
+   - Run pytest or other test commands within this environment
+
+3. **Before installing packages:**
+   - Always use `conda install` or `pip install` within the 'testing' environment
+   - Never install to global Python environment
+
+### Key Commands
+
+```bash
+# Activate environment (REQUIRED)
+conda activate testing
+
+# Run tests
+pytest
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Deactivate when done
+conda deactivate
+```
+
+### Important Notes
+
+- This project uses conda for environment management
+- Global pip installations will cause conflicts
+- Always verify environment before running commands
+- Use the 'testing' conda environment for all development work
+

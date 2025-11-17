@@ -131,7 +131,7 @@ def build_executor_prompt(
     # Format few-shot examples
     examples_lines = []
     for example in resources['few_shot_examples']:
-        examples_lines.append(f"**Query:** {example['query']}")
+        examples_lines.append(f"**Query:** {example['natural_language']}")
         examples_lines.append("**Elasticsearch DSL:**")
         examples_lines.append("```json")
         examples_lines.append(json.dumps(example['elasticsearch_query'], indent=2))
